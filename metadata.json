@@ -1,0 +1,5 @@
+{
+  "name": "CodeCanvas",
+  "description": "CodeCanvas transforms abstract code into tangible, interactive visual experiences. It uses AI to simulate code execution and generates animated visualizations, helping developers and students understand how algorithms work step-by-step.",
+  "requestFramePermissions": []
+}
