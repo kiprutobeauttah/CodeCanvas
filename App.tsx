@@ -185,7 +185,7 @@ export default function App() {
     }
   }, [code, language]);
 
-  const handleStep = (direction: 'forward' | 'backward') => {
+  const handleStep = useCallback((direction: 'forward' | 'backward') => {
     if (!executionTrace) return;
     setIsPlaying(false);
     if (direction === 'forward') {
@@ -193,7 +193,33 @@ export default function App() {
     } else {
       setCurrentStep(prev => Math.max(prev - 1, 0));
     }
-  };
+  }, [executionTrace]);
+
+  // Keyboard shortcuts for stepping
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isLoading || document.activeElement?.tagName === 'TEXTAREA' || document.activeElement?.tagName === 'INPUT') {
+        return;
+      }
+      
+      if (!executionTrace) return;
+
+      if (e.key === 'ArrowRight' && currentStep < executionTrace.length - 1) {
+        e.preventDefault();
+        handleStep('forward');
+      } else if (e.key === 'ArrowLeft' && currentStep > 0) {
+        e.preventDefault();
+        handleStep('backward');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [executionTrace, currentStep, isLoading, handleStep]);
+
 
   const currentExecutionStep = executionTrace?.[currentStep];
   const arrayVariables = currentExecutionStep ? Object.entries(currentExecutionStep.variables)
